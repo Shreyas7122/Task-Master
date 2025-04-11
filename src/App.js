@@ -5,7 +5,6 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState("");
   const [completedTasks, setCompletedTasks] = useState([]);
-  const [deletedTasks, setDeletedTasks] = useState([]);
 
   useEffect(() => {
     const storedTasks = localStorage.getItem("tasks");
@@ -17,9 +16,8 @@ function App() {
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
-  const handleDelete = (taskToDelete) => {
+    const handleDelete = (taskToDelete) => {
     setTasks(tasks.filter((task) => task !== taskToDelete));
-    setDeletedTasks([...deletedTasks, taskToDelete]);
     setCompletedTasks(completedTasks.filter((task) => task !== taskToDelete));
     localStorage.setItem(
       "tasks",
@@ -65,7 +63,6 @@ function App() {
             <div key={index} className="flex-row">
               {task}
               <input
-                onClick={() => handleComplete(task)}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                 type="checkbox"
                 checked={completedTasks.includes(task)}
