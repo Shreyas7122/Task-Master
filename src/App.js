@@ -1,28 +1,21 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import MyBtn from "./components/btn";
+import { button } from "@material-tailwind/react";
 
-function App() {
+const App = () => {
   const [tasks, setTasks] = useState([]);
-  const [task, setTask] = useState("");
+  const timestamp = new Date().toLocaleString();
+  const [task, setTask] = useState();
   const [completedTasks, setCompletedTasks] = useState([]);
 
-  useEffect(() => {
-    const storedTasks = localStorage.getItem("tasks");
-    if (storedTasks) {
-      setTasks(JSON.parse(storedTasks));
-    }
-  }, []);
 
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
+  var id = 0;
+
+ 
     const handleDelete = (taskToDelete) => {
     setTasks(tasks.filter((task) => task !== taskToDelete));
     setCompletedTasks(completedTasks.filter((task) => task !== taskToDelete));
-    localStorage.setItem(
-      "tasks",
-      JSON.stringify(tasks.filter((task) => task !== taskToDelete))
-    );
   };
   const handleComplete = (taskToComplete, isChecked) => {
     if (isChecked) {
@@ -32,49 +25,82 @@ function App() {
     }
   };
 
+  const handleadd = (task) => {
+    if (!task) {
+      alert("Please enter a task");
+      return;
+    }
+    if (tasks.includes(task)) {
+      alert("Task already exists");
+      return;
+    }
+const newTask = {
+      text: task,
+      id: id,
+      timestamp: timestamp
+    };
+
+    setTasks([...tasks, newTask]);
+    id++;
+    setTask("");
+  }
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleadd(task);
+    }
+  }
+
+  const handleEdit = (taskToEdit) => {
+    const newTask = prompt("Edit your task", taskToEdit.text);
+    if (newTask) {
+      setTasks(tasks.map(task => (task === taskToEdit ? { ...task, text: newTask } : task)));
+    }
+  }
+
   return (
-    <div className="flex gap-2">
-      <h1 className=" flex gap-2 text-2xl font-bold text-center text-slate-800">
+    <div className="Page">
+      <h1>
         Task Master
       </h1>
+      <div
+        className="input-container"
+      >
       <input
         onChange={(e) => setTask(e.target.value)}
         value={task}
         type="text"
         name="task"
         id="task"
-        autoComplete="off"
-        className="flexw-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-5 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
         placeholder="Type your task here"
+        onKeyPress={handleKeyPress}
       ></input>
-      <button
-        onClick={() => {
-          setTasks([...tasks, task]);
-          setTask("");
-        }}
-        className="rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
-        type="button"
-      >
-        ADD
-      </button>
-      <div className="flex flex-col gap-2">
-        <div className="flex-row">
-          {tasks.map((task, index) => (
-            <div key={index} className="flex-row">
-              {task}
+      <MyBtn
+        onClick={() => handleadd(task)}
+        className="Add-btn"
+        label="ADD"
+      />
+      </div>
+      <div>
+        <div
+          className="map-container"> 
+          {tasks.map((task,key) => (
+            <div key={key}>
               <input
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                 type="checkbox"
-                checked={completedTasks.includes(task)}
                 onChange={(e) => handleComplete(task, e.target.checked)}
               />
-              <button
+              {task.text}
+              <MyBtn
                 onClick={() => handleDelete(task)}
-                type="button"
-                className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-              >
-                Delete
-              </button>
+                className="Delete-btn"
+                label="DELETE"
+              />
+              <MyBtn
+                onClick = {()=> handleEdit(task)}
+                className="Edit-btn"
+                label="EDIT"
+              />
             </div>
           ))}
         </div>
