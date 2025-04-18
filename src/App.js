@@ -37,19 +37,17 @@ const App = () => {
         timestamp: new Date().toLocaleString(),
       },
     ]);
+    document.getElementById("task").value = "";
   };
 
-
-
   const handleEdit = (updatedTask) => {
-    console.log("Updated Task:", updatedTask);
     const updatedTasks = tasks.map((t) =>
       t.id === updatedTask.id ? updatedTask : t
     );
     setTasks(updatedTasks);
   };
 
-  const filter = (tasks) => {
+  const Completed = (tasks) => {
     return tasks.filter((tasks) => tasks.isCompleted).length;
   };
 
@@ -66,7 +64,6 @@ const App = () => {
           placeholder="Type your task here"
         ></input>
         <MyBtn
-          onClick={() => handleadd(task)}
           className="Add-btn"
           label="ADD"
         />
@@ -85,7 +82,7 @@ const App = () => {
           />
         </div>
       ))}
-      Tasks Completed: {filter(tasks)}
+      Tasks Completed: {Completed(tasks)}
       <PendingTasks tasks={tasks} />
     </div>
     </>
