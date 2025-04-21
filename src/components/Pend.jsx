@@ -4,10 +4,10 @@ const PendingTasks = ({ tasks }) => {
   const pendingTasks = tasks.filter((task) => !task.isCompleted);
 
   return (
-    <div>
+    <div className="pending-tasks">
       Pending Tasks
-      {pendingTasks.map((task,key) => (
-        <div key={key}>
+      {pendingTasks.map((task) => (
+        <div key={task.id}>
           -{task.text}  </div>
       ))}
     </div>

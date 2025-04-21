@@ -8,6 +8,10 @@ const EditComponent = ({ task, updatedTask }) => {
 
   const handleEditToggle = () => {
     if (isEditing) {
+      if (!taskToEdit.trim()) {
+        alert("Task cannot be empty");
+        return;
+      }
       updatedTask({ ...task, text: taskToEdit });
     }
     setIsEditing(!isEditing);
@@ -20,16 +24,11 @@ const EditComponent = ({ task, updatedTask }) => {
           type="text"
           value={taskToEdit}
           onChange={(e) => setTaskToEdit(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              updatedTask({ ...task, text: taskToEdit });
-              setIsEditing(false);
-            }
-          }}
         />
       ) : (
         <span>{task.text}</span>
       )}
+      Effort:{task.effort}
       <MyBtn className="Edit-btn" onClick={handleEditToggle} label={isEditing ? "Save" : "Edit"} />
     </div>
   );

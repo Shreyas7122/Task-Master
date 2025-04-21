@@ -19,7 +19,7 @@ const App = () => {
     setTasks(updatedTasks);
   };
 
-  const handleadd = (task) => {
+  const handleAdd = (task) => {
     if (!task) {
       alert("Please enter a task");
       return;
@@ -31,6 +31,7 @@ const App = () => {
     setTasks([
       ...tasks,
       {
+        effort: document.getElementById("Effort").value,
         isCompleted: false,
         text: task,
         id: nanoid(),
@@ -47,44 +48,60 @@ const App = () => {
     setTasks(updatedTasks);
   };
 
-  const Completed = (tasks) => {
-    return tasks.filter((tasks) => tasks.isCompleted).length;
-  };
+  const TotalEffort = tasks.reduce((acc, task) => {
+    if (task.isCompleted) {
+      return acc + parseInt(task.effort, 10);
+    }
+    return acc;
+  }
+  , 0);
+
 
   return (
     <>
-    <div className="Page">
-    <h1 className="h1">Task Master</h1>
-      <div className="input-container">
-        <input
-          onBlur={(e) => handleadd(e.target.value)}
-          type="text"
-          name="task"
-          id="task"
-          placeholder="Type your task here"
-        ></input>
-        <MyBtn
-          className="Add-btn"
-          label="ADD"
-        />
-      </div>
-      {tasks.map((task) => (
-        <div className="map-container" key={task.id}>
+      <div className="Page">
+        <h1 className="h1">Task Master</h1>
+        <div className="input-container">
           <input
-            type="checkbox"
-            onChange={(e) => handleComplete(task, e.target.checked)}
-          />
-          <EditComponent task={task} updatedTask={handleEdit} />
-          <MyBtn
-            onClick={() => handleDelete(task)}
-            className="Delete-btn"
-            label="DELETE"
+            type="text"
+            name="task"
+            id="task"
+            placeholder="Type your task here"
+          ></input>
+          <select name="Effort" id="Effort">
+            <option value="100">Effort</option>
+              <option value="20">20</option>
+              <option value="40">40</option>
+              <option value="60">60</option>
+              <option value="80">80</option>
+              <option value="100">100</option>
+            </select>
+          <MyBtn className="Add-btn" label="ADD" 
+          onClick={() => {
+            const task = document.getElementById("task").value;
+            handleAdd(task);
+          }
+          }
           />
         </div>
-      ))}
-      Tasks Completed: {Completed(tasks)}
-      <PendingTasks tasks={tasks} />
-    </div>
+        {tasks.map((task) => (
+              <div className="map-container" key={task.id}>
+              <input
+                type="checkbox"
+                onChange={(e) => handleComplete(task, e.target.checked)}
+              />
+              <EditComponent task={task} updatedTask={handleEdit} />
+              <MyBtn
+                onClick={() => handleDelete(task)}
+                className="Delete-btn"
+                label="DELETE"
+              />
+            </div>
+        ))}<br />
+        Total Effort:{TotalEffort}<br/>  
+        Tasks Completed: {tasks.filter((task) => task.isCompleted).length}
+        <PendingTasks tasks={tasks} />
+      </div>
     </>
   );
 };
