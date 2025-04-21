@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MyBtn from "./components/btn";
 import EditComponent from "./components/edit";
 import { nanoid } from "nanoid";
@@ -7,6 +7,7 @@ import PendingTasks from "./components/Pend";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
+  const [TotalEffort , setTotalEffort] = useState("0");
 
   const handleDelete = (taskToDelete) => {
     setTasks(tasks.filter((task) => task !== taskToDelete));
@@ -17,6 +18,11 @@ const App = () => {
       t.id === task.id ? { ...t, isCompleted: isChecked } : t
     );
     setTasks(updatedTasks);
+    if (isChecked) {
+      setTotalEffort(TotalEffort-parseInt(task.effort));
+    } else {
+      setTotalEffort(TotalEffort+parseInt(task.effort));
+    }
   };
 
   const handleAdd = (task) => {
@@ -48,14 +54,22 @@ const App = () => {
     setTasks(updatedTasks);
   };
 
-  const TotalEffort = tasks.reduce((acc, task) => {
-    if (task.isCompleted) {
-      return acc + parseInt(task.effort, 10);
-    }
-    return acc;
-  }
-  , 0);
+useEffect(() => {
+  setTotalEffort(
+    tasks.reduce((acc, task) => {
+  
+      return acc+ parseInt(task.effort);
+        }, 0)
+  );
+}
+, [tasks.effort]);
 
+const effortOptions = [20, 40, 60, 80, 100];
+const effort = effortOptions.map((effort) => (
+  <option key={effort} value={effort}>
+    {effort}
+  </option>
+));
 
   return (
     <>
@@ -68,14 +82,9 @@ const App = () => {
             id="task"
             placeholder="Type your task here"
           ></input>
-          <select name="Effort" id="Effort">
-            <option value="100">Effort</option>
-              <option value="20">20</option>
-              <option value="40">40</option>
-              <option value="60">60</option>
-              <option value="80">80</option>
-              <option value="100">100</option>
-            </select>
+          <select id="Effort" name="Effort">
+          {effort}
+          </select>
           <MyBtn className="Add-btn" label="ADD" 
           onClick={() => {
             const task = document.getElementById("task").value;
@@ -97,8 +106,8 @@ const App = () => {
                 label="DELETE"
               />
             </div>
-        ))}<br />
-        Total Effort:{TotalEffort}<br/>  
+        ))}
+          Total Effort:{TotalEffort}<br /><br />
         Tasks Completed: {tasks.filter((task) => task.isCompleted).length}
         <PendingTasks tasks={tasks} />
       </div>
