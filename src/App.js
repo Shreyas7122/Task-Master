@@ -21,9 +21,9 @@ const App = () => {
     );
     setTasks(updatedTasks);
     if (!isChecked) {
-      setTotalEffort(TotalEffort-parseInt(task.effort));
-    } else {
       setTotalEffort(TotalEffort+parseInt(task.effort));
+    } else {
+      setTotalEffort(TotalEffort-parseInt(task.effort));
     }
   };
 
@@ -81,7 +81,7 @@ useEffect(() => {
         }, 0)
   );
 }
-, [tasks]);
+, [tasks.effort]);
 
 const effortOptions = [20, 40, 60, 80, 100];
 const effort = effortOptions.map((effort) => (
